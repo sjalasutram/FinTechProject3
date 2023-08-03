@@ -1,53 +1,54 @@
-pragma solidity ^0.5.0;
+pragma solidity >=0.8.1;
 pragma experimental ABIEncoderV2;
+//USE SPDX-License-Identifier: MIT;
+import "@openzeppelin/contracts/utils/Counters.sol";
 
 contract Survey {
+    using Counters for Counters.Counter;
 
-    constructor (uint _num_questions, string memory _survey_name) public {
+    modifier isactiveSurvey(){
+        require(hasSurveyExpired() == false);
+        _;
     }
 
-    uint public _survey_end_time;
-    
+    Counters.Counter survey_counter;
+
+    string[4][] survey;
+    string[7][] survey_questions;
+
+    uint deployDate;
+
+    function hasSurveyExpired() public view returns(bool){
+        return (block.timestamp > (deployDate + 1 minutes));
+    }
+
+    constructor(){
+        deployDate = block.timestamp;
+        survey_counter.increment();
+    }
+
+
     enum _response_option_indexes{A,B,C,D}
     _response_option_indexes response; 
 
-    /*
-    survey question structure is identified by a question index and
-    the question. all survey questions start with index value of 1.
-    a survey cannot have more than 10 questions
-    */
-    // struct _question {
-    //     uint q_index;
-    //     string question;
-    // }
-
-    // struct _choice {
-    //     _response_option_indexes choice_index;
-    //     string choice_text;
-    //     //bool _selected; // indicates if this choice was selected; needed?
-    // }
-    
-    // struct survey {
-    //     uint _survey_id;
-    //     string _survey_name;
-    //     _question[] question;
-    //     _choice[] choice;
-    // }
-
-    string[][7] survey;
-
     // the mapping will ensure that the respondent can submit the survey only once
     mapping(address => string[]) _survey_responses;
+    address[] _responder_address;
 
-    function listSurveyResults() external view returns (string[] memory, string[] memory, string[] memory) {
-
+    function numSurveyResponses() external view returns(uint){
+        return _responder_address.length;
     }
 
-    function addSurveyresponse(string[] memory responses) public payable{
+    function getSurveyResponseAtIndex(uint _index) external view returns (address, string[] memory){
+        return (_responder_address[_index], _survey_responses[_responder_address[_index]]);
+    }
+
+    function addSurveyresponse(string[] memory responses) public payable isactiveSurvey{
         _survey_responses[msg.sender] = responses;
+        _responder_address[_responder_address.length] = msg.sender;
 
     }
 
-    function() external payable{}
+    receive() external payable {}
 
 }
