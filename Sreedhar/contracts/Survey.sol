@@ -18,7 +18,7 @@ contract Survey {
     uint public deployDate;
 
     function hasSurveyExpired() public view returns(bool){
-        return (block.timestamp > (deployDate + 10 minutes));
+        return (block.timestamp > (deployDate + 100 minutes));
     }
 
     constructor(uint survey_id
@@ -48,19 +48,22 @@ contract Survey {
         return _responder_address.length;
     }
 
-    // the function returns the address of the responder and the responses that were recorded on the 
-    // survey from that address
-    function getSurveyResponseAtIndex(uint _index) external view returns (address, string[] memory){
-        return (_responder_address[_index], _survey_responses[_responder_address[_index]]);
+    // the function returns the responses that were recorded on the survey
+    function getSurveyResponseAtIndex(uint _index) external view returns (string[] memory){
+        return (_survey_responses[_responder_address[_index]]);
+    }
+
+    // the function returns the responder address at a specific index that were recorded on the survey
+    function getSurveyResponderAtIndex(uint _index) external view returns (address) {
+        return _responder_address[_index];
     }
 
     // responses on the contract will be recorded using this function
     // the function uses a modifier to ensure that the survey responses are recorded on the survey
     // within the the time the survey is allocated to be active
-    function addSurveyresponse(string[] memory responses) public payable isactiveSurvey{
-        uint index = _responder_address.length;
+    function addSurveyresponse(string[] memory responses) public isactiveSurvey{
         _survey_responses[msg.sender] = responses;
-        _responder_address[index++] = msg.sender;
+        _responder_address.push(msg.sender);
     }
 
     // callback function

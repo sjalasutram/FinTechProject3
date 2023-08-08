@@ -5,6 +5,7 @@ import os
 from dotenv import load_dotenv
 import json
 from typing import List
+from eth_abi import abi
 
 # load the environment variables by calling the load_dotenv function
 load_dotenv()
@@ -19,7 +20,7 @@ def load_contract(admin_account):
     with open(Path('./contracts/SurveyDeployer.json')) as f:
         deployer_certificate_json = json.load(f)
         deployer_certificate_abi = deployer_certificate_json['abi']
-        print(f"deployer_certificate_abi: {deployer_certificate_abi}")
+        # print(f"deployer_certificate_abi: {deployer_certificate_abi}")
     deployer_contract_address = os.getenv("SURWEI_DEPLOYER_ADDRESS")
     with open(Path('./contracts/Survey.json')) as s:
         survey_json = json.load(s)
@@ -51,11 +52,25 @@ def load_contract(admin_account):
 
         # using the SurveyDeployer.json, create a contract object
         deployer_contract = w3.eth.contract(address=deployer_contract_address,abi=deployer_certificate_abi)
-        survey_address = deployer_contract.functions.createNewSurvey(surwei_name,surwei_questions,surwei_responses).transact({'from':admin_account, 'gas':3000000})
-        print(f"address of the new contract is {survey_address}")
+        #response_data = deployer_contract.functions.createNewSurvey(surwei_name,surwei_questions,surwei_responses).transact({'from':admin_account, 'gas':3000000})
+        #decodedABI = abi.decode(['address', 'uint'], response_data)
+        #print(decodedABI)
+        deployer_contract.functions.createNewSurvey(surwei_name,surwei_questions,surwei_responses).transact({'from':admin_account, 'gas':3000000})
+        total_surveys_generated = deployer_contract.functions.getTotalSurveys().call()
+        print(type(total_surveys_generated))
+
+
+    #for i in total_surveys_generated[1]:
+    survey_address = deployer_contract.functions.getSurveyAddressAtIndex(1).call()
+    # print(f"{survey_address}")
+    survey_contract = w3.eth.contract(address=survey_address,abi=survey_abi)
+    survey_contract.functions.addSurveyresponse(["A","D","C","D"]).transact({'from':admin_account, 'gas':3000000})
+    num_survey_responses = survey_contract.functions.numSurveyResponses().call()        
+    print(f"{survey_address} {num_survey_responses}")
+
+        #print(f"address of the new contract is {survey_address}")        
     #survey_contract = w3.eth.contract(address=survey_address,abi=survey_abi)
     #survey_contract.functions.addSurveyresponse(['C','C','D']).transact({'from':admin_account, 'gas':3000000})
 
 if __name__ == '__main__':
     load_contract(surwei_admin_address)
-
