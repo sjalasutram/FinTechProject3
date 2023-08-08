@@ -61,7 +61,6 @@ contract Survey {
         uint index = _responder_address.length;
         _survey_responses[msg.sender] = responses;
         _responder_address[index++] = msg.sender;
-
     }
 
     // callback function
