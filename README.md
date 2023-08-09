@@ -21,7 +21,7 @@ Solidity  https://remix.ethereum.org/
 Python
 Pandas 
 MetaMask browser extension https://metamask.io/
-Ganashe  https://trufflesuite.com/ganache/
+Ganache  https://trufflesuite.com/ganache/
 web3 
 NumPy
 
