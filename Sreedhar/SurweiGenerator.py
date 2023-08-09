@@ -44,7 +44,7 @@ w3 = Web3(Web3.HTTPProvider(os.getenv("WEB3_PROVIDER_URI")))
 # get responder_address returns a random address from the Ganache
 def get_responder_address():
     accounts = w3.eth.accounts
-    random_value = randint(1,len(accounts))
+    random_value = randint(0,9)
     return accounts[random_value]
 
 #
@@ -126,10 +126,9 @@ def generate_surveys(admin_account):
 # the function injects fictitious responses to the survey, generating 4 random choices from a list - A, B, C or D
 #
 def respond_to_surveys(num_surveys_generated):
-    print(f"num_surveys_generated {num_surveys_generated}")
+    print(f"Survey Responses")
     survey_deployer_contract = get_survey_deployer_contract()
     response_options_list = ['A','B','C','D']
-    responder_address = get_responder_address()
     for i in range(num_surveys_generated):
         survey_address = survey_deployer_contract.functions.getSurveyAddressAtIndex(i).call()
         survey_contract = get_survey_contract(survey_address)
@@ -137,7 +136,9 @@ def respond_to_surveys(num_surveys_generated):
         # the number of responses is controlled by a randint function
         for i in range(randint(1,10)):
             choice_list = choices(response_options_list,k=4)
-            print(f"survey_address: {survey_address} {choice_list} {responder_address}")
+            # responder address should get a random account from the local Ganache ,to mimic multiple responders
+            responder_address = get_responder_address()
+            print(f"survey address: {survey_address}  responder: {responder_address} responses: {choice_list}")
             survey_contract.functions.addSurveyresponse(choice_list).transact({'from':responder_address, 'gas':3000000})
 
 #
@@ -151,7 +152,17 @@ def surveys_and_responses_report(survey_deployer_contract):
         if(survey_address != '0x0000000000000000000000000000000000000000'):
             survey_contract = get_survey_contract(survey_address)
             val = survey_contract.functions.getSurvey().call()
-            print(val)
+            print(f"survey name: {val[0]} is located at address: {survey_address}")
+            print(f"survey questions and choices")
+            i=0
+            options_list = ['A','B','C','D']
+            for question in val[1]:
+                print(f"{question}")
+                j=0
+                for choices in val[[2][0]][i]:
+                    print(f"{options_list[j]}. {choices}")
+                    j+=1
+                i+=1
             num_responses = survey_contract.functions.numSurveyResponses().call()
             for i in range(num_responses):
                 responder = survey_contract.functions.getSurveyResponderAtIndex(i).call() 
