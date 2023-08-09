@@ -1,21 +1,28 @@
 from web3 import Web3
-import json
+from dotenv import load_dotenv
+import pandas as pd
+from pathlib import Path
 import os
 from dotenv import load_dotenv
+import json
+from typing import List
+from eth_abi import abi
+from random import choices
+from random import randint
 
-
+#load the env file to allow the addresses to be used
 load_dotenv()
 
-
+#setup the ability to call the admin addresses
 surwei_admin_address = os.getenv('SURWEI_ADMIN_ADDRESS')
 
-
+#setup the ability to call the deployer address
 deployer_contract_address = os.getenv("SURWEI_DEPLOYER_ADDRESS")
 
-
+#setup the ability to call the example excel file
 _excel_file_path=os.getenv('EXCEL_FILE_LOCATION')
 
-
+#setup the Web provider call
 w3 = Web3(Web3.HTTPProvider(os.getenv("WEB_PROVIDER_URI")))
 
 # Contract interfaces
