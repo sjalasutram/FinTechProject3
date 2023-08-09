@@ -17,14 +17,14 @@ Project SurWei involves in creating the Survey, distributing the survey to a gro
 
 ## Libraries and Technologies Used
 
-Solidity
+Solidity  https://remix.ethereum.org/
 Python
 Pandas 
-MetaMask browser extension
-Ganashe 
+MetaMask browser extension https://metamask.io/
+Ganashe  https://trufflesuite.com/ganache/
 web3 
 NumPy
 
 
 ## Conclusion
-This project required a combination of blockchain technolog and decentralized applications (dApps) to build a dynamic survey app to facilitate survey creation, to provide access to a specific survey and responses  which can pave way to real time analytics reporting on the survey responses. 
+This project required a combination of blockchain technologies and decentralized applications (dApps) to build a dynamic survey app to facilitate survey creation, to provide access to a specific survey and responses  which can pave way to real time analytics reporting on the survey responses. 
