@@ -46,7 +46,8 @@ def get_survey_results(survey_address, sender):
   # Check authorization
   if sender not in AUTHORIZED_USERS:
     raise Exception("Unauthorized")
-    
+
+ #set up the call for the total responses and then append the responder total and responses total to the call   
   num_responses = survey_contract.functions.numSurveyResponses().call()
 
   results = []
